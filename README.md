@@ -1,6 +1,6 @@
 # 別讓資料庫不開心！有些工作讓 Elasticsearch 來代勞。
 
-## Samples
+### Samples
 
 - Create Index with Mappings
 - Index One by One（with dynamic）
@@ -12,3 +12,4 @@
 - Partial update
 - Delete
 - Delete by Query
+
