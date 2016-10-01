@@ -1,6 +1,6 @@
 # 別讓資料庫不開心！有些工作讓 Elasticsearch 來代勞。
 
-### Samples
+### CRUD Samples
 
 - Create Index with Mappings
 - Index One by One（with dynamic）
@@ -13,3 +13,7 @@
 - Delete
 - Delete by Query
 
+### Logstash Config Samples
+
+- iislog.conf
+- iislog_to_es.conf
