@@ -41,6 +41,7 @@
             this.Button10 = new System.Windows.Forms.Button();
             this.Button11 = new System.Windows.Forms.Button();
             this.Button12 = new System.Windows.Forms.Button();
+            this.Button13 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // Button1
@@ -79,7 +80,7 @@
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(537, 538);
+            this.textBox1.Size = new System.Drawing.Size(537, 612);
             this.textBox1.TabIndex = 3;
             // 
             // Button4
@@ -134,9 +135,9 @@
             // 
             // Button9
             // 
-            this.Button9.Location = new System.Drawing.Point(12, 430);
+            this.Button9.Location = new System.Drawing.Point(12, 437);
             this.Button9.Name = "Button9";
-            this.Button9.Size = new System.Drawing.Size(150, 23);
+            this.Button9.Size = new System.Drawing.Size(150, 30);
             this.Button9.TabIndex = 9;
             this.Button9.Text = "Partial Update";
             this.Button9.UseVisualStyleBackColor = true;
@@ -146,7 +147,7 @@
             // 
             this.Button10.Location = new System.Drawing.Point(12, 401);
             this.Button10.Name = "Button10";
-            this.Button10.Size = new System.Drawing.Size(150, 23);
+            this.Button10.Size = new System.Drawing.Size(150, 30);
             this.Button10.TabIndex = 10;
             this.Button10.Text = "Update";
             this.Button10.UseVisualStyleBackColor = true;
@@ -154,9 +155,9 @@
             // 
             // Button11
             // 
-            this.Button11.Location = new System.Drawing.Point(12, 459);
+            this.Button11.Location = new System.Drawing.Point(12, 473);
             this.Button11.Name = "Button11";
-            this.Button11.Size = new System.Drawing.Size(150, 23);
+            this.Button11.Size = new System.Drawing.Size(150, 30);
             this.Button11.TabIndex = 11;
             this.Button11.Text = "Delete";
             this.Button11.UseVisualStyleBackColor = true;
@@ -164,19 +165,30 @@
             // 
             // Button12
             // 
-            this.Button12.Location = new System.Drawing.Point(12, 488);
+            this.Button12.Location = new System.Drawing.Point(12, 509);
             this.Button12.Name = "Button12";
-            this.Button12.Size = new System.Drawing.Size(150, 23);
+            this.Button12.Size = new System.Drawing.Size(150, 30);
             this.Button12.TabIndex = 12;
             this.Button12.Text = "Delete by Query";
             this.Button12.UseVisualStyleBackColor = true;
             this.Button12.Click += new System.EventHandler(this.Button12_Click);
             // 
+            // Button13
+            // 
+            this.Button13.Location = new System.Drawing.Point(12, 545);
+            this.Button13.Name = "Button13";
+            this.Button13.Size = new System.Drawing.Size(150, 30);
+            this.Button13.TabIndex = 13;
+            this.Button13.Text = "Continuous Search";
+            this.Button13.UseVisualStyleBackColor = true;
+            this.Button13.Click += new System.EventHandler(this.Button13_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(717, 562);
+            this.ClientSize = new System.Drawing.Size(717, 636);
+            this.Controls.Add(this.Button13);
             this.Controls.Add(this.Button12);
             this.Controls.Add(this.Button11);
             this.Controls.Add(this.Button10);
@@ -213,6 +225,7 @@
         private System.Windows.Forms.Button Button10;
         private System.Windows.Forms.Button Button11;
         private System.Windows.Forms.Button Button12;
+        private System.Windows.Forms.Button Button13;
     }
 }
 

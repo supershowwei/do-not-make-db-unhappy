@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Dapper;
 using Elasticsearch.Net;
@@ -33,10 +35,12 @@ namespace ElasticsearchLab
             {
                 if (this.esClient == null)
                 {
-                    var nodes = new[] { new Uri(@"http://192.168.8.108:9200") };
+                    var nodes = new[]
+                                    {
+                                        new Uri(@"http://192.168.8.111:9200"), new Uri(@"http://192.168.8.112:9200"),
+                                        new Uri(@"http://192.168.8.113:9200")
+                                    };
 
-                    // , new Uri(@"http://192.168.8.107:9200"),
-                    // new Uri(@"http://192.168.8.105:9200")
                     var connectionSettings = new ConnectionSettings(new StaticConnectionPool(nodes));
 
                     this.esClient = new ElasticClient(connectionSettings);
@@ -53,7 +57,7 @@ namespace ElasticsearchLab
                 if (!this.logShipper.Connected)
                 {
                     this.logShipper.NoDelay = true;
-                    this.logShipper.Connect("192.168.8.102", 1304);
+                    this.logShipper.Connect("192.168.8.121", 1304);
                 }
 
                 return this.logShipper;
@@ -105,26 +109,69 @@ namespace ElasticsearchLab
                 d => d.Query(q => q.QueryString(qs => qs.Fields(f => f.Field("press")).Query("中國時報"))));
         }
 
-        private void Button2_Click(object sender, EventArgs e)
+        private async void Button13_Click(object sender, EventArgs e)
+        {
+            var button = (Button)sender;
+
+            if ((button.Tag == null) || (bool)button.Tag)
+            {
+                button.Tag = false;
+
+                await Task.Run(
+                    () =>
+                        {
+                            while (true)
+                            {
+                                if ((bool)button.Tag)
+                                {
+                                    break;
+                                }
+
+                                var searchResult =
+                                    this.ESClient.Search<dynamic>(
+                                        s => s.Query(q => q.QueryString(qs => qs.Query("八軍團"))));
+
+                                this.SafeShowMessage(
+                                    JsonConvert.SerializeObject(
+                                        new { Time = DateTime.Now, Hits = searchResult.Hits.Count() },
+                                        Formatting.Indented));
+
+                                Thread.Sleep(100);
+                            }
+                        });
+            }
+            else
+            {
+                button.Tag = true;
+            }
+        }
+
+        private async void Button2_Click(object sender, EventArgs e)
         {
             var dir = @"D:\Downloads\iislogs";
             var files = Directory.GetFiles(dir, "*.log");
 
-            foreach (var file in files)
-            {
-                foreach (var content in File.ReadAllLines(file))
-                {
-                    if (string.IsNullOrEmpty(content) || content.StartsWith("#"))
+            await Task.Run(
+                () =>
                     {
-                        continue;
-                    }
+                        foreach (var file in files)
+                        {
+                            foreach (var content in File.ReadAllLines(file))
+                            {
+                                if (string.IsNullOrEmpty(content) || content.StartsWith("#"))
+                                {
+                                    continue;
+                                }
 
-                    var networkStream = this.LogShipper.GetStream();
-                    var dataBytes = Encoding.UTF8.GetBytes(content + Environment.NewLine);
-                    networkStream.Write(dataBytes, 0, dataBytes.Length);
-                    networkStream.Flush();
-                }
-            }
+                                var networkStream = this.LogShipper.GetStream();
+                                var dataBytes = Encoding.UTF8.GetBytes(content + Environment.NewLine);
+                                networkStream.Write(dataBytes, 0, dataBytes.Length);
+                                networkStream.Flush();
+                            }
+
+                            this.SafeAppendMessage($"{DateTime.Now}: {Path.GetFileName(file)}\r\n");
+                        }
+                    });
         }
 
         private void Button3_Click(object sender, EventArgs e)
@@ -172,22 +219,26 @@ namespace ElasticsearchLab
         {
             var searchResult = this.ESClient.Search<dynamic>(s => s.Query(q => q.QueryString(qs => qs.Query("八軍團"))));
 
-            this.textBox1.Text =
+            this.SafeShowMessage(
                 JsonConvert.SerializeObject(
                     new { Hits = searchResult.Hits.Count(), Results = searchResult.Hits.Select(x => x.Source) },
-                    Formatting.Indented);
+                    Formatting.Indented));
         }
 
         private void Button8_Click(object sender, EventArgs e)
         {
             var searchResult =
                 this.ESClient.Search<News>(
-                    s => s.Query(q => q.QueryString(qs => qs.Fields(f => f.Field(p => p.Title)).Query("八軍團"))));
+                    s =>
+                        s.Query(
+                            q =>
+                                q.QueryString(qs => qs.Fields(f => f.Field(p => p.Title)).Query("八軍團"))
+                                && q.QueryString(qs => qs.Fields(f => f.Field(p => p.Press)).Query("\"中廣新聞網\""))));
 
-            this.textBox1.Text =
+            this.SafeShowMessage(
                 JsonConvert.SerializeObject(
                     new { Hits = searchResult.Hits.Count(), Results = searchResult.Hits.Select(x => x.Source) },
-                    Formatting.Indented);
+                    Formatting.Indented));
         }
 
         private void Button9_Click(object sender, EventArgs e)
@@ -216,6 +267,16 @@ namespace ElasticsearchLab
             }
 
             return newsList;
+        }
+
+        private void SafeAppendMessage(string message)
+        {
+            this.textBox1.SafeInvoke(() => { this.textBox1.AppendText(message); });
+        }
+
+        private void SafeShowMessage(string message)
+        {
+            this.textBox1.SafeInvoke(() => { this.textBox1.Text = message; });
         }
     }
 }
